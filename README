@@ -1,0 +1,23 @@
+DOS Executable Header OPTimizer
+
+This simple program (1) reduces unused space in the header of DOS
+executable that is typically generously allocated by a linker (at least
+TLINK is known to allocate not less than 512 bytes for the header,
+though the minimum required size is in fact can be as small as 32 bytes)
+and (2) allows injection of arbitrary metadata into the header.
+
+N.B. I don't know if it's important for relocation entries in the header
+to be aligned somehow, so the program doesn't care about alignment.
+If you care, you can do manual alignment using appropriate size for
+metadata.
+
+Such utility is bound to be already existing, but today, when I needed
+it, I couldn't find any but FILE SCANNER by SMT/SMF which happened to
+be a Win32 only application, not a pure DOS program I was looking for.
+
+I use Turbo C 2.0 and its make for building the program.
+
+If you want to build it for *nix use GCC/GNU Make and Makefile.nix.
+
+May 7th, 2016
+-- Vitaly Sinilin
