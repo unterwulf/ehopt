@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 	char buf[512];
 
 	if (argc != 3 && argc != 4) {
-		fprintf(stderr, "usage: ehopt in.exe out.exe [meta]\n");
+		fputs("usage: ehopt in.exe out.exe [meta]\n", stderr);
 		return EXIT_FAILURE;
 	}
 

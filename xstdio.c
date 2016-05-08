@@ -6,7 +6,9 @@ FILE *xfopen(const char *path, const char *mode)
     FILE *fp = fopen(path, mode);
 
     if (!fp) {
-        fprintf(stderr, "unable to open file '%s'\n", path);
+        fputs("unable to open file '", stderr);
+        fputs(path, stderr);
+        fputs("'\n", stderr);
         exit(EXIT_FAILURE);
     }
 
