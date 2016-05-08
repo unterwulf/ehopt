@@ -35,7 +35,7 @@ int main(int argc, char *argv[])
 	FILE *in, *out;
 	int ch;
 	char *meta;
-	size_t i, metalen = 0;
+	size_t i, new_sz, metalen = 0;
 	struct EXE hdr, new_hdr;
 
 	if (argc != 3 && argc != 4) {
@@ -56,6 +56,14 @@ int main(int argc, char *argv[])
 	new_hdr.reloc_table_offset = sizeof (struct EXE) + metalen;
 	new_hdr.header_paragraphs = (new_hdr.reloc_table_offset
 		+ sizeof (struct EXE_RELOC) * new_hdr.num_relocs + 15) >> 4;
+
+	new_sz = new_hdr.header_paragraphs * 16
+	       + (hdr.blocks_in_file - (hdr.bytes_in_last_block != 0)) * 512
+	       + hdr.bytes_in_last_block
+	       - hdr.header_paragraphs * 16;
+
+	new_hdr.blocks_in_file = (new_sz + 511) / 512;
+	new_hdr.bytes_in_last_block = new_sz % 512;
 
 	out = fopen(argv[2], "wb");
 	xfwrite(&new_hdr, sizeof (struct EXE), 1, out);
