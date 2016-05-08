@@ -34,11 +34,11 @@ struct EXE_RELOC {
 int main(int argc, char *argv[])
 {
 	FILE *in, *out;
-	int ch;
 	char *meta;
-	size_t i, metalen = 0;
+	size_t i, nread, metalen = 0;
 	uint32_t new_sz;
 	struct EXE hdr, new_hdr;
+	char buf[512];
 
 	if (argc != 3 && argc != 4) {
 		fprintf(stderr, "usage: ehopt in.exe out.exe [meta]\n");
@@ -81,8 +81,13 @@ int main(int argc, char *argv[])
 	xfseek(in, hdr.header_paragraphs << 4, SEEK_SET);
 	xfseek(out, new_hdr.header_paragraphs << 4, SEEK_SET);
 
-	while ((ch = fgetc(in)) != EOF)
-		xfputc(ch, out);
+	while ((nread = fread(buf, 1, sizeof buf, in)) > 0)
+		xfwrite(buf, 1, nread, out);
+
+	if (ferror(in) != 0) {
+		fputs("read error\n", stderr);
+		return EXIT_FAILURE;
+	}
 
 	fclose(in);
 	fclose(out);
