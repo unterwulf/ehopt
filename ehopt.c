@@ -6,6 +6,7 @@
 #include <stdint.h>
 #else
 #define uint16_t unsigned short
+#define uint32_t unsigned long
 #endif
 
 struct EXE {
@@ -35,7 +36,8 @@ int main(int argc, char *argv[])
 	FILE *in, *out;
 	int ch;
 	char *meta;
-	size_t i, new_sz, metalen = 0;
+	size_t i, metalen = 0;
+	uint32_t new_sz;
 	struct EXE hdr, new_hdr;
 
 	if (argc != 3 && argc != 4) {
@@ -57,13 +59,13 @@ int main(int argc, char *argv[])
 	new_hdr.header_paragraphs = (new_hdr.reloc_table_offset
 		+ sizeof (struct EXE_RELOC) * new_hdr.num_relocs + 15) >> 4;
 
-	new_sz = new_hdr.header_paragraphs * 16
-	       + (hdr.blocks_in_file - (hdr.bytes_in_last_block != 0)) * 512
+	new_sz = new_hdr.header_paragraphs * 16UL
+	       + (hdr.blocks_in_file - (hdr.bytes_in_last_block != 0)) * 512UL
 	       + hdr.bytes_in_last_block
-	       - hdr.header_paragraphs * 16;
+	       - hdr.header_paragraphs * 16UL;
 
-	new_hdr.blocks_in_file = (new_sz + 511) / 512;
-	new_hdr.bytes_in_last_block = new_sz % 512;
+	new_hdr.blocks_in_file = (uint16_t)((new_sz + 511) / 512);
+	new_hdr.bytes_in_last_block = (uint16_t)(new_sz % 512);
 
 	out = fopen(argv[2], "wb");
 	xfwrite(&new_hdr, sizeof (struct EXE), 1, out);
